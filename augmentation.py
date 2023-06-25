@@ -33,7 +33,7 @@ def plot(imgs, with_orig=False, row_title=None, **imshow_kwargs):
 
 
 def folder_save(file_name, imgs, transformation_type):
-    jpg_folder_path = 'results/images'
+    jpg_folder_path = r'C:\Users\codecamp\Downloads\results\images'
 
     if not os.path.exists(jpg_folder_path):
         os.makedirs(jpg_folder_path)
@@ -48,7 +48,7 @@ def folder_save(file_name, imgs, transformation_type):
 
         print(f"Saved {len(imgs)} images.\n")
     else:
-        img_path = f"{jpg_folder_path}/{file_name[:-4]}.1.jpg"
+        img_path = f"{jpg_folder_path}/{file_name[:-4]}.1.{transformation_type}.jpg"
         imgs.save(img_path)
         print("Saved 1 image.\n")
 
@@ -109,34 +109,40 @@ def flipper(orig_img, file_name):
 
 
 def txt_change(txt_input_path):
-    txt_result_path = r'C:\Users\codecamp\PycharmProjects\pythonProject1\results\labels'
-    jpgs_path = r'C:\Users\codecamp\PycharmProjects\pythonProject1\results\images'
+    txt_result_path = r'C:\Users\codecamp\Downloads\results\labels'
+    jpgs_path = r'C:\Users\codecamp\Downloads\results\images'
 
-    print(os.listdir(jpgs_path))
+    jpg_file_names = os.listdir(jpgs_path)
+    txt_file_names = os.listdir(txt_input_path)
 
-    for jpg_file in os.listdir(jpgs_path):
-        for txt_file in os.listdir(txt_input_path):
+    counter = 0
+
+    for jpg_file in sorted(jpg_file_names):
+        for txt_file in sorted(txt_file_names):
             old_txt_name = txt_file.split(".")[0]
             new_txt_name = os.path.splitext(jpg_file)[0]
 
             if old_txt_name == new_txt_name.split('.')[0]:
+                counter += 1
                 print(f'{old_txt_name=}\t{new_txt_name=}')
                 txt_file_path = os.path.join(txt_input_path, txt_file)
                 with open(txt_file_path, 'r') as txt_file:
                     txt_data = txt_file.read()
 
                 new_txt_path = os.path.join(txt_result_path, f"{new_txt_name}.txt")
+                print(f'{new_txt_path=}')
                 os.makedirs(os.path.dirname(new_txt_path), exist_ok=True)
 
                 with open(new_txt_path, 'w') as new_txt_file:
                     new_txt_file.write(txt_data)
+    print(counter)
 
 
-jpg_input_folder = r"C:\Users\codecamp\Downloads\train\images"
+jpg_input_folder = r"C:\Users\codecamp\Downloads\input2\images"
 jpg_file_names = os.listdir(jpg_input_folder)
 num_images = len(jpg_file_names)
 
-txt_input_folder = r"C:\Users\codecamp\Downloads\train\labels"
+txt_input_folder = r"C:\Users\codecamp\Downloads\input2\labels"
 
 for file_name in jpg_file_names:
     jpg_file_path = os.path.join(jpg_input_folder, file_name)
