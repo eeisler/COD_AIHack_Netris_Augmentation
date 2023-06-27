@@ -6,6 +6,18 @@ import numpy as np
 import torch
 import torchvision.transforms as T
 
+jpg_input_folder = input("Enter the path to images input folder: ")
+txt_input_folder = input("Enter the path to labels input folder: ")
+
+downloads_folder = os.path.expanduser(r"~\Downloads")
+
+txt_result_folder = r'results\labels'
+txt_result_path = os.path.join(downloads_folder, txt_result_folder)
+os.makedirs(txt_result_path, exist_ok=True)
+
+jpg_result_folder = r'results\images'
+jpg_result_path = os.path.join(downloads_folder, jpg_result_folder)
+os.makedirs(jpg_result_path, exist_ok=True)
 
 def plot(imgs, with_orig=False, row_title=None, **imshow_kwargs):
     if not isinstance(imgs[0], list):
@@ -33,24 +45,16 @@ def plot(imgs, with_orig=False, row_title=None, **imshow_kwargs):
 
 
 def folder_save(file_name, imgs, transformation_type):
-    jpg_folder_path = r'C:\Users\codecamp\Downloads\results\images'
-
-    if not os.path.exists(jpg_folder_path):
-        os.makedirs(jpg_folder_path)
-        print(f"Directory '{jpg_folder_path}' created successfully.")
-    else:
-        print(f"Directory '{jpg_folder_path}' already exists.")
-
     if isinstance(imgs, list):
         for i, img in enumerate(imgs):
-            img_path = f"{jpg_folder_path}/{file_name[:-4]}.{i + 1}.{transformation_type}.jpg"
+            img_path = f"{jpg_result_path}/{file_name[:-4]}.{i + 1}.{transformation_type}.jpg"
             img.save(img_path)
 
-        print(f"Saved {len(imgs)} images.\n")
+        print(f"Saved {len(imgs)} images.")
     else:
-        img_path = f"{jpg_folder_path}/{file_name[:-4]}.1.{transformation_type}.jpg"
+        img_path = f"{jpg_result_path}/{file_name[:-4]}.1.{transformation_type}.jpg"
         imgs.save(img_path)
-        print("Saved 1 image.\n")
+        print("Saved 1 image.")
 
 
 def gray(orig_img, file_name):
@@ -109,12 +113,7 @@ def flipper(orig_img, file_name):
 
 
 def txt_change(txt_input_path):
-    txt_result_path = r'C:\Users\codecamp\Downloads\results\labels'
-    jpgs_path = r'C:\Users\codecamp\Downloads\results\images'
-
-    jpg_file_names = os.listdir(jpgs_path)
     txt_file_names = os.listdir(txt_input_path)
-
     counter = 0
 
     for jpg_file in sorted(jpg_file_names):
@@ -124,13 +123,11 @@ def txt_change(txt_input_path):
 
             if old_txt_name == new_txt_name.split('.')[0]:
                 counter += 1
-                print(f'{old_txt_name=}\t{new_txt_name=}')
                 txt_file_path = os.path.join(txt_input_path, txt_file)
                 with open(txt_file_path, 'r') as txt_file:
                     txt_data = txt_file.read()
 
                 new_txt_path = os.path.join(txt_result_path, f"{new_txt_name}.txt")
-                print(f'{new_txt_path=}')
                 os.makedirs(os.path.dirname(new_txt_path), exist_ok=True)
 
                 with open(new_txt_path, 'w') as new_txt_file:
@@ -138,17 +135,13 @@ def txt_change(txt_input_path):
     print(counter)
 
 
-jpg_input_folder = r"C:\Users\codecamp\Downloads\input2\images"
 jpg_file_names = os.listdir(jpg_input_folder)
-num_images = len(jpg_file_names)
-
-txt_input_folder = r"C:\Users\codecamp\Downloads\input2\labels"
 
 for file_name in jpg_file_names:
     jpg_file_path = os.path.join(jpg_input_folder, file_name)
     if not os.path.isfile(jpg_file_path):
         continue
-    print(file_name, end='\n')
+    print(f"{file_name} file in progress\n")
     orig_img = Image.open(jpg_file_path)
     torch.manual_seed(0)
 
